@@ -1,14 +1,29 @@
 # NEON SAGA — Collector Capsule
 
-React / Express / tRPC / Drizzle starter, adapted from the Sandbox web-db-user template.
+Site vitrine immersif construit avec Nuxt 4 et Vue 3, sans backend applicatif ni base de données. Les médias du brief NEON SAGA sont servis depuis le stockage du projet WebDev.
 
-- `pnpm dev`: development server; honors `PORT` (default 3000).
-- `pnpm build` / `pnpm start`: build and serve `dist/index.js` and `dist/public/`.
-- `pnpm db:migrate`: apply checked-in migrations. `pnpm db:push`: generate and apply new schema changes.
-- `pnpm check` / `pnpm test`: types and application tests.
+## Développement
 
-Start with the Webdev skill's default-template guide. Platform login, storage, payments and service contracts live in its shared references; read the relevant capability before extending its helper.
+```bash
+pnpm install
+pnpm dev:static
+```
 
-`server/_core/publicConfig.ts` exposes only named public runtime values. Private keys stay server-side. The platform serves managed `/manus-storage/` assets; the application does not register a second proxy.
+Le serveur de développement écoute sur `0.0.0.0` et le port `PORT` transmis par l’environnement (3000 par défaut).
 
-Platform configuration is readable and editable through `webdev.config`. Default settings are initial values, not enforced constraints. The agent may modify the files, commands and configuration or follow the flexible guide for another stack.
+## Vérifications et génération statique
+
+```bash
+pnpm check
+pnpm build:static
+```
+
+Nuxt génère le site prêt à servir sous `.output/public`. Le code est organisé en `app/pages`, `app/components`, `app/composables` et `app/assets`, avec les médias dans le stockage WebDev et les ressources statiques dans `public`.
+
+## Socle technique
+
+- Nuxt 4 / Vue 3 pour le rendu et le routage.
+- Three.js pour la scène 3D interactive du coffret.
+- VueUse pour les utilitaires réactifs et les interactions liées au scroll.
+- Lucide Vue pour les icônes vectorielles.
+- Aucun serveur métier et aucune base de données ne sont requis.
