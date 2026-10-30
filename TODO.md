@@ -4,6 +4,7 @@
 - [x] Construire le site vitrine avec Nuxt/Vue, en modules et composants réutilisables, pour faciliter son évolution ; le projet reste statique, sans base de données.
 - [x] Créer une page de présentation immersive et professionnelle, organisée comme une narration visuelle autour de la Collector Capsule NEON SAGA.
 - [x] Intégrer la vidéo de 30 secondes au parcours de page et synchroniser sa progression ou ses séquences avec le défilement, plutôt que de la limiter à une bannière d’accueil.
+- [x] Reproduire la mécanique de la vidéo de référence sans reprendre son visuel automobile : l’objet NEON SAGA reste épinglé au viewport pendant le récit ; le défilement fait avancer la séquence, le défilement vers le haut la fait reculer, et l’image reste stable quand l’utilisateur s’arrête ; les chapitres et textes changent avec la même progression.
 - [x] Présenter le coffret à partir des visuels NEON SAGA fournis, puis mettre en valeur séparément les accessoires inclus avec images, intitulés et descriptions.
 - [x] Ajouter des sections éditoriales sur l’univers, le concept et le caractère collector de NEON SAGA.
 - [x] Employer des bibliothèques populaires et maintenues, dont une bibliothèque d’icônes, dans une architecture claire et réutilisable.
@@ -17,5 +18,5 @@
 
 ## Responsive et performance
 - [x] Rendre l’expérience utilisable sur desktop et mobile, avec adaptation des médias et des interactions tactiles.
-- [x] Optimiser le chargement des images et de la vidéo afin de conserver une navigation fluide.
+- [x] Optimiser le chargement des images et de la vidéo afin de conserver une navigation fluide pendant le scrub du clip.
 - [x] Garder le projet sans backend et sans base de données.

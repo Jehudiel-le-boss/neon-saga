@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import { ArrowDownRight, ArrowRight, Move3D, Rotate3D, Sparkles } from "@lucide/vue";
+import { ArrowRight, Move3D, Rotate3D } from "@lucide/vue";
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useIntersectionObserver } from "@vueuse/core";
 
 const media = {
-  video: "/manus-storage/neon-saga-scroll_978038a2.mp4",
+  video: "/manus-storage/neon-saga-scroll-scrub_256a4f1e.mp4",
   music: "/manus-storage/neon-saga-ambience_0a885fa9.mp3",
   hero: "/manus-storage/capsule-hero_4839566a.webp",
-  mobile: "/manus-storage/capsule-mobile_54604945.webp",
   top: "/manus-storage/capsule-top_d8baa549.webp",
   open: "/manus-storage/capsule-open_b90a1d03.webp",
   exploded: "/manus-storage/capsule-exploded_193e25bd.webp",
@@ -151,36 +150,7 @@ onBeforeUnmount(() => {
     <BrandHeader :theme="theme" @toggle-theme="toggleTheme" />
 
     <main>
-      <section class="hero-section" aria-labelledby="hero-title">
-        <div class="hero-grid-bg" aria-hidden="true"></div>
-        <div class="hero-copy">
-          <p class="eyebrow hero-eyebrow"><span class="status-dot"></span> NEON SAGA / COLLECTOR CAPSULE</p>
-          <h1 id="hero-title">Un univers.<br /><em>À portée de main.</em></h1>
-          <p class="hero-intro">Le rituel de l’unboxing devient une expérience de collection. Six pièces singulières, réunies dans un écrin pensé pour être exposé.</p>
-          <a class="button button-primary hero-cta" href="#parcours" @click="playUiSound(720)">
-            Explorer la capsule <ArrowDownRight :size="17" />
-          </a>
-          <div class="hero-facts" aria-label="Caractéristiques de la capsule">
-            <div><strong>06</strong><span>PIÈCES<br />INCLUSES</span></div>
-            <div><strong>01</strong><span>ÉCRIN<br />TRANSPARENT</span></div>
-            <div><strong>∞</strong><span>UNIVERS<br />À EXPLORER</span></div>
-          </div>
-        </div>
-
-        <div class="hero-visual">
-          <div class="hero-orbit hero-orbit--one" aria-hidden="true"></div>
-          <div class="hero-orbit hero-orbit--two" aria-hidden="true"></div>
-          <picture class="hero-picture">
-            <source :srcset="media.mobile" media="(max-width: 700px)" />
-            <img :src="media.hero" alt="Collector Capsule NEON SAGA ouverte, avec le cyber-samouraï et ses accessoires" fetchpriority="high" decoding="async" />
-          </picture>
-          <div class="hero-visual-label"><span>CAPSULE / 001</span><span>COLLECTOR SERIES</span></div>
-          <div class="hero-visual-index"><Sparkles :size="16" /><span>UNE PIÈCE<br />À EXPOSER</span></div>
-        </div>
-        <a class="hero-scroll-cue" href="#parcours" aria-label="Défiler vers le parcours" @click="playUiSound(600)"><span class="scroll-cue-line"></span><span>FAITES DÉFILER</span></a>
-      </section>
-
-      <StoryScroll :video-src="media.video" :poster="media.hero" @chapter="onChapterChange" />
+      <StoryScroll :video-src="media.video" :poster="media.hero" @chapter="onChapterChange" @interaction="playUiSound(720)" />
 
       <section id="capsule" class="capsule-section section-shell" aria-labelledby="capsule-title">
         <div class="capsule-copy">

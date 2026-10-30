@@ -1,101 +1,157 @@
 <script setup lang="ts">
-import { useWindowScroll } from "@vueuse/core";
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 
 defineProps<{ videoSrc: string; poster: string }>();
-const emit = defineEmits<{ chapter: [index: number] }>();
+const emit = defineEmits<{ chapter: [index: number]; interaction: [] }>();
 
 const track = ref<HTMLElement | null>(null);
 const video = ref<HTMLVideoElement | null>(null);
 const progress = ref(0);
 const activeChapter = ref(0);
+const duration = ref(30);
 const chapters = [
-  { label: "01 / RÉVÉLATION", title: "L’écrin s’éveille.", text: "La transparence du plexiglas laisse d’abord deviner une silhouette. Puis le couvercle s’ouvre et révèle un univers tenu en équilibre." },
-  { label: "02 / LES DÉTAILS", title: "Chaque pièce a sa place.", text: "Le samouraï cobalt, son compagnon mécanique et les accessoires apparaissent dans leurs logements, sous des reflets électriques." },
-  { label: "03 / VUE ÉCLATÉE", title: "L’objet devient spectacle.", text: "Le coffret se déploie autour de sa pièce centrale. Le regard prend le temps de parcourir chaque détail." },
-  { label: "04 / COLLECTION", title: "Tout retrouve son écrin.", text: "Les éléments reviennent à leur place ; la capsule se referme, prête à rejoindre une collection ou une vitrine." },
+  { label: "01 / RÉVÉLATION", title: "Un univers.", emphasis: "À portée de main.", text: "Le rituel de l’unboxing commence. Faites défiler pour révéler la Collector Capsule NEON SAGA." },
+  { label: "02 / L’ÉCRIN S’ÉVEILLE", title: "L’écrin", emphasis: "s’ouvre.", text: "Les lignes du coffret se dévoilent progressivement, au rythme exact de votre défilement." },
+  { label: "03 / PIÈCE MAÎTRESSE", title: "Le samouraï", emphasis: "prend forme.", text: "Armure cobalt et énergie carmin : la pièce centrale apparaît au cœur de la capsule." },
+  { label: "04 / VUE D’ENSEMBLE", title: "Six pièces.", emphasis: "Une même saga.", text: "La composition s’ouvre pour laisser découvrir le cyber-samouraï, le mini-dragon et les accessoires." },
+  { label: "05 / COLLECTION", title: "Tout retrouve", emphasis: "son écrin.", text: "Poursuivez pour refermer le récit — ou remontez pour revoir chaque détail à rebours." },
 ];
+const active = computed(() => chapters[activeChapter.value] ?? chapters[0]!);
 const timeLabel = computed(() => {
-  const seconds = Math.floor(progress.value * 30);
-  return `00:${String(Math.min(seconds, 30)).padStart(2, "0")}`;
+  const seconds = Math.min(Math.floor(progress.value * duration.value), Math.floor(duration.value));
+  return `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
 });
-const { y } = useWindowScroll({ throttle: 16 });
+const durationLabel = computed(() => {
+  const seconds = Math.floor(duration.value);
+  return `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
+});
 let raf = 0;
 
 function updateProgress() {
   raf = 0;
-  if (!track.value || !import.meta.client) return;
-  const rect = track.value.getBoundingClientRect();
-  const travel = Math.max(track.value.offsetHeight - window.innerHeight, 1);
-  const next = Math.min(1, Math.max(0, -rect.top / travel));
-  if (Math.abs(next - progress.value) > 0.003) progress.value = next;
+  const section = track.value;
+  if (!section || !import.meta.client) return;
 
-  const index = Math.min(chapters.length - 1, Math.floor(next * chapters.length));
-  if (index !== activeChapter.value) {
-    activeChapter.value = index;
-    emit("chapter", index);
+  const rect = section.getBoundingClientRect();
+  const travel = Math.max(section.offsetHeight - window.innerHeight, 1);
+  const next = Math.min(1, Math.max(0, -rect.top / travel));
+  if (Math.abs(next - progress.value) > 0.0015) progress.value = next;
+
+  const nextChapter = Math.min(chapters.length - 1, Math.floor(next * chapters.length));
+  if (nextChapter !== activeChapter.value) {
+    activeChapter.value = nextChapter;
+    emit("chapter", nextChapter);
   }
 
-  const element = video.value;
-  if (element && element.readyState >= 1 && Number.isFinite(element.duration)) {
-    const targetTime = Math.min(element.duration - 0.04, next * element.duration);
-    if (Math.abs(element.currentTime - targetTime) > 0.07) element.currentTime = Math.max(0, targetTime);
+  const film = video.value;
+  if (film && film.readyState >= 1 && Number.isFinite(film.duration) && film.duration > 0) {
+    const targetTime = Math.min(film.duration - 0.015, next * film.duration);
+    if (Math.abs(film.currentTime - targetTime) > 0.025) film.currentTime = Math.max(0, targetTime);
+    if (!film.paused) film.pause();
   }
 }
 
 function queueProgress() {
-  if (!raf) raf = window.requestAnimationFrame(updateProgress);
+  if (!raf && import.meta.client) raf = window.requestAnimationFrame(updateProgress);
 }
 
-const stopWatching = watch(y, queueProgress, { flush: "post" });
+function onMetadata() {
+  const film = video.value;
+  if (film && Number.isFinite(film.duration) && film.duration > 0) duration.value = film.duration;
+  film?.pause();
+  queueProgress();
+}
+
+function jumpToChapter(index: number) {
+  const section = track.value;
+  if (!section || !import.meta.client) return;
+  emit("interaction");
+  const start = window.scrollY + section.getBoundingClientRect().top;
+  const travel = Math.max(section.offsetHeight - window.innerHeight, 1);
+  const targetProgress = (index + 0.45) / chapters.length;
+  window.scrollTo({ top: start + travel * targetProgress, behavior: "smooth" });
+}
 
 onMounted(() => {
-  video.value?.addEventListener("loadedmetadata", queueProgress);
+  window.addEventListener("scroll", queueProgress, { passive: true });
+  window.addEventListener("resize", queueProgress, { passive: true });
+  video.value?.pause();
   queueProgress();
 });
 
 onBeforeUnmount(() => {
-  stopWatching();
-  video.value?.removeEventListener("loadedmetadata", queueProgress);
+  window.removeEventListener("scroll", queueProgress);
+  window.removeEventListener("resize", queueProgress);
   if (raf) window.cancelAnimationFrame(raf);
 });
 </script>
 
 <template>
-  <section id="parcours" ref="track" class="story-section" aria-label="La capsule racontée au fil du défilement">
-    <div class="story-intro">
-      <div>
-        <p class="eyebrow"><span class="status-dot"></span> UNE SÉQUENCE À PARCOURIR</p>
-        <h2 class="section-title">Le scroll donne<br /><em>le mouvement.</em></h2>
-      </div>
-      <p class="story-intro__note">Faites défiler la page : le film avance avec vous, de l’ouverture au retour de chaque pièce dans son écrin.</p>
-    </div>
-
-    <div class="story-track">
-      <div class="story-stage-wrap">
-        <div class="story-stage">
-          <video ref="video" :src="videoSrc" :poster="poster" muted playsinline preload="metadata" aria-label="Film de présentation NEON SAGA, contrôlé par le défilement" />
-          <div class="story-stage__wash"></div>
-          <div class="story-stage__top"><span>NEON SAGA / FILM 01</span><span>30 SEC</span></div>
-          <div class="story-stage__bottom">
-            <span class="story-stage__chapter">{{ chapters[activeChapter]?.label }}</span>
-            <span class="story-stage__time">{{ timeLabel }} <span>/ 00:30</span></span>
-          </div>
-          <div class="story-progress" role="progressbar" :aria-valuenow="Math.round(progress * 100)" aria-valuemin="0" aria-valuemax="100" aria-label="Progression du film">
-            <span :style="{ transform: `scaleX(${progress})` }"></span>
-          </div>
-        </div>
-        <p class="story-stage-hint"><span class="scroll-key">↓</span> DÉFILEZ POUR FAIRE AVANCER LE FILM</p>
+  <section id="parcours" ref="track" class="scroll-film" aria-label="Film NEON SAGA piloté par le défilement">
+    <div class="scroll-film__sticky">
+      <div class="scroll-film__ambient" aria-hidden="true"></div>
+      <div class="scroll-film__visual">
+        <video
+          ref="video"
+          class="scroll-film__video"
+          :src="videoSrc"
+          :poster="poster"
+          muted
+          playsinline
+          preload="auto"
+          fetchpriority="high"
+          aria-label="Film NEON SAGA de 30 secondes, avancé et reculé par le défilement"
+          @loadedmetadata="onMetadata"
+        />
+        <div class="scroll-film__wash" aria-hidden="true"></div>
       </div>
 
-      <div class="story-rail">
-        <article v-for="(chapter, index) in chapters" :key="chapter.label" class="story-step" :class="{ 'is-active': activeChapter === index }">
-          <span class="story-step__number">{{ chapter.label }}</span>
-          <h3>{{ chapter.title }}</h3>
-          <p>{{ chapter.text }}</p>
-          <span class="story-step__line" aria-hidden="true"></span>
+      <div class="scroll-film__topline">
+        <span><i class="status-dot"></i> NEON SAGA / COLLECTOR CAPSULE</span>
+        <span>FILM <b>30 SEC</b></span>
+      </div>
+
+      <Transition name="scroll-copy" mode="out-in">
+        <article :key="activeChapter" class="scroll-film__copy">
+          <p class="eyebrow"><span class="status-dot"></span>{{ active.label }}</p>
+          <h1 v-if="activeChapter === 0">{{ active.title }}<br /><em>{{ active.emphasis }}</em></h1>
+          <h2 v-else>{{ active.title }}<br /><em>{{ active.emphasis }}</em></h2>
+          <p class="scroll-film__description">{{ active.text }}</p>
+          <a v-if="activeChapter === 0" class="button button-primary scroll-film__cta" href="#capsule" @click="emit('interaction')">
+            Découvrir la capsule <span aria-hidden="true">↘</span>
+          </a>
+          <div v-if="activeChapter === 0" class="scroll-film__facts" aria-label="La Collector Capsule en trois repères">
+            <span><b>06</b> pièces</span><span><b>01</b> écrin</span><span><b>∞</b> univers</span>
+          </div>
         </article>
+      </Transition>
+
+      <div class="scroll-film__position" aria-hidden="true">
+        <span>{{ String(activeChapter + 1).padStart(2, "0") }}</span>
+        <span class="scroll-film__position-divider"></span>
+        <span>{{ String(chapters.length).padStart(2, "0") }}</span>
       </div>
+
+      <nav class="scroll-film__chapters" aria-label="Aller à un chapitre du film">
+        <button
+          v-for="(chapter, index) in chapters"
+          :key="chapter.label"
+          type="button"
+          :class="{ 'is-active': activeChapter === index }"
+          :aria-label="`Aller au chapitre ${index + 1} : ${chapter.title} ${chapter.emphasis}`"
+          :aria-current="activeChapter === index ? 'step' : undefined"
+          @click="jumpToChapter(index)"
+        ><span></span></button>
+      </nav>
+
+      <div class="scroll-film__bottomline">
+        <span class="scroll-film__hint"><b aria-hidden="true">↓</b> DÉFILEZ POUR AVANCER · REMONTEZ POUR REVENIR</span>
+        <span class="scroll-film__time"><b>{{ timeLabel }}</b><i>/</i>{{ durationLabel }}</span>
+      </div>
+      <div class="scroll-film__progress" role="progressbar" :aria-valuenow="Math.round(progress * 100)" aria-valuemin="0" aria-valuemax="100" :aria-valuetext="`${Math.round(progress * 100)} %, ${timeLabel} sur ${durationLabel}`" aria-label="Progression du film">
+        <span :style="{ transform: `scaleX(${progress})` }"></span>
+      </div>
+      <span class="sr-only" aria-live="polite">{{ active.label }} — {{ active.title }} {{ active.emphasis }}</span>
     </div>
   </section>
 </template>

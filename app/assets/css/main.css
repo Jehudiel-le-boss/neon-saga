@@ -394,3 +394,241 @@ img { display: block; max-width: 100%; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
+
+
+/* Full-viewport scroll film: the visitor's scroll is the playback timeline. */
+.scroll-film {
+  position: relative;
+  height: 620svh;
+  min-height: 3200px;
+  background: var(--bg-deep);
+}
+.scroll-film__sticky {
+  position: sticky;
+  z-index: 1;
+  top: 80px;
+  height: calc(100svh - 80px);
+  min-height: 520px;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--bg-deep);
+}
+.scroll-film__ambient,
+.scroll-film__visual,
+.scroll-film__wash { position: absolute; inset: 0; pointer-events: none; }
+.scroll-film__ambient {
+  z-index: -1;
+  background: radial-gradient(ellipse at 68% 49%, rgba(16, 112, 194, 0.22), transparent 36%), radial-gradient(ellipse at 80% 29%, rgba(215, 43, 77, 0.12), transparent 25%);
+}
+.scroll-film__visual { z-index: 0; display: grid; place-items: center; }
+.scroll-film__video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  filter: drop-shadow(0 28px 75px rgba(0, 0, 0, 0.46));
+  background: transparent;
+}
+.scroll-film__wash {
+  z-index: 1;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--bg-deep) 95%, transparent) 0%, color-mix(in srgb, var(--bg-deep) 88%, transparent) 27%, color-mix(in srgb, var(--bg-deep) 34%, transparent) 51%, transparent 76%), linear-gradient(0deg, color-mix(in srgb, var(--bg-deep) 68%, transparent), transparent 22%, transparent 78%, color-mix(in srgb, var(--bg-deep) 44%, transparent));
+}
+.scroll-film__topline,
+.scroll-film__bottomline {
+  position: absolute;
+  z-index: 4;
+  right: var(--page-gutter);
+  left: var(--page-gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--muted);
+  font: 8px "DM Mono", monospace;
+  letter-spacing: 0.14em;
+}
+.scroll-film__topline { top: 23px; }
+.scroll-film__topline > span:first-child { display: inline-flex; align-items: center; gap: 9px; }
+.scroll-film__topline b { margin-left: 8px; color: var(--text); font-weight: 500; }
+.scroll-film__bottomline { bottom: 24px; }
+.scroll-film__hint { display: inline-flex; align-items: center; gap: 10px; }
+.scroll-film__hint b { color: var(--blue); font: 16px "Manrope", sans-serif; }
+.scroll-film__time { display: flex; align-items: center; gap: 8px; font-size: 10px; }
+.scroll-film__time b { color: var(--text); font-weight: 500; }
+.scroll-film__time i { color: var(--muted); font-style: normal; }
+.scroll-film__copy {
+  position: absolute;
+  z-index: 3;
+  top: 48%;
+  left: var(--page-gutter);
+  width: min(43vw, 540px);
+  transform: translateY(-44%);
+}
+.scroll-film__copy .eyebrow { margin-bottom: 19px; }
+.scroll-film__copy h1,
+.scroll-film__copy h2 {
+  max-width: 680px;
+  margin: 0;
+  color: var(--text);
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(54px, 6.7vw, 104px);
+  font-weight: 500;
+  letter-spacing: -0.075em;
+  line-height: 0.94;
+}
+.scroll-film__copy h1 em,
+.scroll-film__copy h2 em { color: var(--blue); font-style: normal; }
+.scroll-film__description { max-width: 370px; margin: 23px 0 20px; color: var(--muted-strong); font-size: 14px; line-height: 1.82; }
+.scroll-film__cta { min-height: 44px; }
+.scroll-film__facts { display: flex; flex-wrap: wrap; gap: 23px; margin-top: 34px; color: var(--muted); font: 8px "DM Mono", monospace; letter-spacing: 0.12em; text-transform: uppercase; }
+.scroll-film__facts span { display: flex; align-items: baseline; gap: 7px; }
+.scroll-film__facts b { color: var(--blue); font: 22px "Space Grotesk", sans-serif; letter-spacing: -0.04em; }
+.scroll-film__position {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  right: var(--page-gutter);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font: 9px "DM Mono", monospace;
+  letter-spacing: 0.12em;
+}
+.scroll-film__position span:first-child { color: var(--text); }
+.scroll-film__position-divider { width: 24px; height: 1px; background: var(--line-strong); }
+.scroll-film__chapters {
+  position: absolute;
+  z-index: 5;
+  bottom: 67px;
+  left: 50%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transform: translateX(-50%);
+}
+.scroll-film__chapters button { display: grid; width: 39px; height: 18px; place-items: center; padding: 0; border: 0; background: transparent; }
+.scroll-film__chapters button span { display: block; width: 100%; height: 2px; background: var(--line-strong); transition: width 220ms ease, height 220ms ease, background-color 220ms ease, box-shadow 220ms ease; }
+.scroll-film__chapters button.is-active span { height: 3px; background: var(--blue); box-shadow: 0 0 12px var(--blue); }
+.scroll-film__chapters button:hover span { background: var(--text); }
+.scroll-film__progress { position: absolute; z-index: 6; right: 0; bottom: 0; left: 0; height: 2px; background: var(--line); }
+.scroll-film__progress span { display: block; width: 100%; height: 100%; transform-origin: left; background: var(--blue); box-shadow: 0 0 12px var(--blue); }
+.scroll-copy-enter-active,
+.scroll-copy-leave-active { transition: opacity 220ms ease, transform 220ms ease; }
+.scroll-copy-enter-from { opacity: 0; transform: translateY(calc(-44% + 10px)); }
+.scroll-copy-leave-to { opacity: 0; transform: translateY(calc(-44% - 10px)); }
+
+@media (max-width: 900px) {
+  .scroll-film__sticky { top: 72px; height: calc(100svh - 72px); min-height: 480px; }
+  .scroll-film__visual { transform: translateY(-7vh); }
+  .scroll-film__wash { background: linear-gradient(180deg, color-mix(in srgb, var(--bg-deep) 34%, transparent), transparent 22%, transparent 48%, color-mix(in srgb, var(--bg-deep) 42%, transparent) 62%, var(--bg-deep) 100%); }
+  .scroll-film__copy { top: auto; right: 24px; bottom: 15vh; left: 24px; width: auto; max-width: 640px; transform: none; }
+  .scroll-film__copy .eyebrow { margin-bottom: 13px; font-size: 8px; }
+  .scroll-film__copy h1,
+  .scroll-film__copy h2 { max-width: 620px; font-size: clamp(43px, 9vw, 72px); }
+  .scroll-film__description { max-width: 345px; margin: 14px 0 14px; font-size: 12px; line-height: 1.65; }
+  .scroll-film__facts { gap: 16px; margin-top: 18px; }
+  .scroll-film__facts b { font-size: 18px; }
+  .scroll-film__position { top: 26px; right: 23px; transform: none; }
+  .scroll-film__topline { top: 23px; left: 23px; right: auto; }
+  .scroll-film__topline > span:last-child { display: none; }
+  .scroll-film__chapters { bottom: 58px; }
+  .scroll-film__bottomline { right: 22px; bottom: 17px; left: 22px; font-size: 7px; }
+  .scroll-film__hint { max-width: 58%; gap: 6px; line-height: 1.4; }
+  .scroll-film__time { gap: 5px; font-size: 9px; }
+}
+
+@media (max-width: 520px) {
+  .scroll-film { height: 580svh; min-height: 3400px; }
+  .scroll-film__sticky { top: 68px; height: calc(100svh - 68px); min-height: 440px; }
+  .scroll-film__visual { transform: translateY(-11vh) scale(1.04); }
+  .scroll-film__copy { right: 20px; bottom: 15vh; left: 20px; }
+  .scroll-film__copy h1,
+  .scroll-film__copy h2 { font-size: clamp(40px, 11.5vw, 58px); }
+  .scroll-film__description { max-width: 290px; font-size: 11px; }
+  .scroll-film__facts { gap: 12px; margin-top: 15px; font-size: 7px; }
+  .scroll-film__facts b { font-size: 16px; }
+  .scroll-film__cta { min-height: 39px; padding: 0 13px; font-size: 10px; }
+  .scroll-film__topline { top: 18px; left: 20px; font-size: 7px; }
+  .scroll-film__position { top: 20px; right: 20px; font-size: 8px; }
+  .scroll-film__chapters { bottom: 55px; gap: 5px; }
+  .scroll-film__chapters button { width: 30px; }
+  .scroll-film__bottomline { bottom: 15px; font-size: 6px; }
+  .scroll-film__hint { max-width: 60%; }
+  .scroll-film__time { font-size: 8px; }
+}
+
+@media (max-height: 560px) {
+  .scroll-film__sticky { min-height: 0; }
+  .scroll-film__copy { top: 48%; }
+  .scroll-film__copy .eyebrow { margin-bottom: 8px; }
+  .scroll-film__description { margin: 10px 0; }
+  .scroll-film__facts { margin-top: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-copy-enter-active,
+  .scroll-copy-leave-active,
+  .scroll-film__chapters button span { transition: none; }
+}
+
+
+/* Sound choice stays available without hiding or trapping the scroll experience. */
+.sound-gate {
+  position: fixed;
+  z-index: 80;
+  inset: auto 24px 104px auto;
+  display: block;
+  width: min(350px, calc(100vw - 32px));
+  max-height: none;
+  overflow: visible;
+  padding: 0;
+  background: transparent;
+  backdrop-filter: none;
+  pointer-events: none;
+}
+.gate-card {
+  width: 100%;
+  padding: 14px 17px 15px;
+  border: 1px solid var(--line-strong);
+  background: color-mix(in srgb, var(--surface) 91%, transparent);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(18px);
+  text-align: left;
+  pointer-events: auto;
+}
+.gate-card::before,
+.gate-card::after { width: 13px; height: 13px; }
+.gate-topline { justify-content: flex-start; gap: 8px; color: var(--muted); font-size: 7px; }
+.gate-topline__line { width: 16px; }
+.gate-emblem,
+.gate-card .eyebrow,
+.gate-footnote { display: none; }
+.gate-card h2 { margin: 8px 0 0; color: var(--text); font-size: 14px; letter-spacing: -0.03em; line-height: 1.25; }
+.gate-card h2 br { display: none; }
+.gate-card h2 em { color: var(--blue); }
+.gate-copy { max-width: none; margin: 4px 0 11px; color: var(--muted); font-size: 10px; line-height: 1.45; }
+.gate-actions { display: flex; gap: 7px; }
+.gate-button { width: auto; min-width: 0; min-height: 34px; flex: 1; gap: 5px; padding: 0 9px; font-size: 9px; white-space: nowrap; }
+.gate-button svg { width: 13px; height: 13px; }
+
+@media (max-width: 520px) {
+  .sound-gate { inset: 78px 10px auto auto; width: min(260px, calc(100vw - 20px)); }
+  .gate-card { padding: 10px 12px 11px; }
+  .gate-card h2 { margin-top: 6px; font-size: 12px; }
+  .gate-copy { margin: 3px 0 8px; font-size: 9px; }
+  .gate-actions { gap: 5px; }
+  .gate-button { min-height: 31px; gap: 4px; padding: 0 6px; font-size: 8px; }
+  .gate-button svg { width: 12px; height: 12px; }
+}
+
+
+@media (min-width: 521px) {
+  .sound-gate { width: min(300px, calc(100vw - 32px)); }
+}
+@media (max-width: 520px) {
+  .scroll-film__topline,
+  .scroll-film__position { display: none; }
+  .sound-gate { width: min(260px, calc(100vw - 20px)); }
+}
