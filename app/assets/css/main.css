@@ -615,9 +615,11 @@ img { display: block; max-width: 100%; }
 
 @media (max-width: 520px) {
   .sound-gate { inset: 78px 10px auto auto; width: min(260px, calc(100vw - 20px)); }
-  .gate-card { padding: 10px 12px 11px; }
-  .gate-card h2 { margin-top: 6px; font-size: 12px; }
-  .gate-copy { margin: 3px 0 8px; font-size: 9px; }
+  .gate-card { padding: 8px 10px; }
+  .gate-topline,
+  .gate-copy { display: none; }
+  .gate-card h2 { margin: 0 0 7px; font-size: 11px; }
+  .gate-card h2 em { display: none; }
   .gate-actions { gap: 5px; }
   .gate-button { min-height: 31px; gap: 4px; padding: 0 6px; font-size: 8px; }
   .gate-button svg { width: 12px; height: 12px; }

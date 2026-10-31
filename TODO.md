@@ -5,6 +5,7 @@
 - [x] Créer une page de présentation immersive et professionnelle, organisée comme une narration visuelle autour de la Collector Capsule NEON SAGA.
 - [x] Intégrer la vidéo de 30 secondes au parcours de page et synchroniser sa progression ou ses séquences avec le défilement, plutôt que de la limiter à une bannière d’accueil.
 - [x] Reproduire la mécanique de la vidéo de référence sans reprendre son visuel automobile : l’objet NEON SAGA reste épinglé au viewport pendant le récit ; le défilement fait avancer la séquence, le défilement vers le haut la fait reculer, et l’image reste stable quand l’utilisateur s’arrête ; les chapitres et textes changent avec la même progression.
+- [x] Faire de la page d’accueil une expérience centrée sur la vidéo, les textes synchronisés et le scroll ; déplacer tout le contenu qui commence par « OBJET / 3D INTERACTIVE — L’écrin devient une scène. » sur une page « La capsule » accessible depuis le menu.
 - [x] Présenter le coffret à partir des visuels NEON SAGA fournis, puis mettre en valeur séparément les accessoires inclus avec images, intitulés et descriptions.
 - [x] Ajouter des sections éditoriales sur l’univers, le concept et le caractère collector de NEON SAGA.
 - [x] Employer des bibliothèques populaires et maintenues, dont une bibliothèque d’icônes, dans une architecture claire et réutilisable.

@@ -7,15 +7,13 @@ const emit = defineEmits<{ toggleTheme: [] }>();
 const menuOpen = ref(false);
 
 const links = [
-  { href: "#parcours", label: "Le parcours" },
-  { href: "#capsule", label: "La capsule" },
-  { href: "#pieces", label: "Les pièces" },
+  { to: "/#parcours", label: "Le film" },
 ];
 </script>
 
 <template>
   <header class="site-header">
-    <a class="brand-lockup" href="#top" aria-label="NEON SAGA — retour au début" @click="menuOpen = false">
+    <NuxtLink class="brand-lockup" to="/" aria-label="NEON SAGA — accueil immersif" @click="menuOpen = false">
       <span class="brand-sigil" aria-hidden="true">
         <svg viewBox="0 0 36 36" fill="none">
           <path d="M18 3 31 10.5v15L18 33 5 25.5v-15L18 3Z" stroke="currentColor" stroke-width="1.4" />
@@ -25,7 +23,7 @@ const links = [
       <span class="brand-wordmark"><strong>NEON</strong><span>SAGA</span></span>
       <span class="brand-divider" aria-hidden="true"></span>
       <span class="brand-caption">COLLECTOR<br />CAPSULE</span>
-    </a>
+    </NuxtLink>
 
     <button
       class="mobile-menu-toggle icon-button"
@@ -39,8 +37,8 @@ const links = [
     </button>
 
     <nav class="main-navigation" :class="{ 'is-open': menuOpen }" aria-label="Navigation principale">
-      <a v-for="link in links" :key="link.href" :href="link.href" @click="menuOpen = false">{{ link.label }}</a>
-      <a class="nav-cta" href="#pieces" @click="menuOpen = false">Explorer <span aria-hidden="true">↗</span></a>
+      <NuxtLink v-for="link in links" :key="link.to" :to="link.to" @click="menuOpen = false">{{ link.label }}</NuxtLink>
+      <NuxtLink class="nav-cta" to="/capsule" @click="menuOpen = false">La capsule <span aria-hidden="true">↗</span></NuxtLink>
     </nav>
 
     <button

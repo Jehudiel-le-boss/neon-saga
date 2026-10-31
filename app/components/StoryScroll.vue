@@ -117,9 +117,9 @@ onBeforeUnmount(() => {
           <h1 v-if="activeChapter === 0">{{ active.title }}<br /><em>{{ active.emphasis }}</em></h1>
           <h2 v-else>{{ active.title }}<br /><em>{{ active.emphasis }}</em></h2>
           <p class="scroll-film__description">{{ active.text }}</p>
-          <a v-if="activeChapter === 0" class="button button-primary scroll-film__cta" href="#capsule" @click="emit('interaction')">
+          <NuxtLink v-if="activeChapter === 0" class="button button-primary scroll-film__cta" to="/capsule" @click="emit('interaction')">
             Découvrir la capsule <span aria-hidden="true">↘</span>
-          </a>
+          </NuxtLink>
           <div v-if="activeChapter === 0" class="scroll-film__facts" aria-label="La Collector Capsule en trois repères">
             <span><b>06</b> pièces</span><span><b>01</b> écrin</span><span><b>∞</b> univers</span>
           </div>
