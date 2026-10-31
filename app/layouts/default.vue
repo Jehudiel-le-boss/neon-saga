@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, provide, ref, watch } from "vue";
+import { nextTick, onBeforeUnmount, onMounted, provide, ref, watch } from "vue";
 import { siteUiSoundKey } from "~/composables/useSiteSound";
 
 const entered = ref(false);
@@ -7,8 +7,14 @@ const soundEnabled = ref(false);
 const playing = ref(false);
 const volume = ref(0.42);
 const theme = ref<"dark" | "light">("dark");
+const themeAnimating = ref(false);
 const audioElement = ref<HTMLAudioElement | null>(null);
 const audioContext = ref<AudioContext | null>(null);
+let themeFallbackTimer = 0;
+
+type ViewTransitionDocument = Document & {
+  startViewTransition?: (update: () => void | Promise<void>) => { finished: Promise<void> };
+};
 
 function playUiSound(frequency = 680) {
   if (!import.meta.client || !soundEnabled.value || volume.value <= 0) return;
@@ -76,9 +82,53 @@ function updateVolume(nextVolume: number) {
   if (audioElement.value) audioElement.value.volume = volume.value;
 }
 
-function toggleTheme() {
-  theme.value = theme.value === "dark" ? "light" : "dark";
-  playUiSound(theme.value === "dark" ? 720 : 560);
+function finishThemeAnimation() {
+  themeAnimating.value = false;
+}
+
+function toggleTheme(event?: MouseEvent) {
+  if (!import.meta.client || themeAnimating.value) return;
+  const nextTheme = theme.value === "dark" ? "light" : "dark";
+  const origin = event?.currentTarget instanceof HTMLElement ? event.currentTarget.getBoundingClientRect() : null;
+  const x = origin ? origin.left + origin.width / 2 : window.innerWidth - 36;
+  const y = origin ? origin.top + origin.height / 2 : 40;
+  const root = document.documentElement;
+  root.style.setProperty("--theme-origin-x", `${x}px`);
+  root.style.setProperty("--theme-origin-y", `${y}px`);
+  themeAnimating.value = true;
+
+  const applyTheme = async () => {
+    theme.value = nextTheme;
+    playUiSound(nextTheme === "dark" ? 720 : 560);
+    await nextTick();
+  };
+  const finish = () => finishThemeAnimation();
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (!reducedMotion) {
+    const transitionDocument = document as ViewTransitionDocument;
+    if (typeof transitionDocument.startViewTransition === "function") {
+      try {
+        const transition = transitionDocument.startViewTransition(applyTheme);
+        void transition.finished.then(finish, finish);
+        return;
+      } catch {
+        // Fall through to the CSS flare if the browser cancels or rejects the transition API.
+      }
+    }
+
+    root.classList.remove("theme-wipe");
+    void root.offsetWidth;
+    root.classList.add("theme-wipe");
+    themeFallbackTimer = window.setTimeout(() => {
+      root.classList.remove("theme-wipe");
+      finish();
+    }, 820);
+  } else {
+    finish();
+  }
+
+  void applyTheme();
 }
 
 watch(theme, value => {
@@ -89,7 +139,7 @@ watch(theme, value => {
   } catch {
     // Storage can be unavailable in private contexts.
   }
-});
+}, { flush: "sync" });
 
 watch(volume, value => {
   if (audioElement.value) audioElement.value.volume = value;
@@ -109,6 +159,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
   audioElement.value?.pause();
   if (audioContext.value && audioContext.value.state !== "closed") void audioContext.value.close();
+  if (themeFallbackTimer) window.clearTimeout(themeFallbackTimer);
 });
 </script>
 

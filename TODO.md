@@ -16,6 +16,8 @@
 - [x] Proposer au visiteur d’entrer avec ou sans son ; ajouter un retour sonore aux interactions.
 - [x] Fournir des commandes accessibles pour couper le son et régler son volume.
 - [x] Créer une direction visuelle bleue soignée et proposer un mode sombre.
+- [x] Déclencher au changement de thème une transition lumineuse remarquable qui part du bouton clair/sombre et révèle le nouveau thème ; respecter la préférence de mouvement réduit.
+- [x] Sur /capsule, synchroniser au scroll la progression visuelle, les révélations séquencées des sections et un mouvement maîtrisé de l’objet 3D ; conserver le contrôle manuel et respecter la préférence de mouvement réduit.
 - [x] Ajouter des transitions et animations fluides au service de la découverte progressive du produit.
 
 ## Responsive et performance

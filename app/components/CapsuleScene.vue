@@ -2,7 +2,7 @@
 import type * as Three from "three";
 import { onBeforeUnmount, onMounted, ref } from "vue";
 
-const props = defineProps<{ open: boolean; poster: string }>();
+const props = defineProps<{ open: boolean; poster: string; scrollProgress?: number }>();
 const host = ref<HTMLDivElement | null>(null);
 const hasWebgl = ref(true);
 let disposeScene: (() => void) | undefined;
@@ -119,6 +119,7 @@ onMounted(async () => {
     outline.position.set(0, 0.03, 0);
     capsule.add(outline);
 
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let targetY = 0;
     let targetX = 0;
     let frame = 0;
@@ -147,12 +148,14 @@ onMounted(async () => {
       if (!isVisible) return;
       frame = window.requestAnimationFrame(animate);
       const elapsed = clock.getElapsedTime();
-      capsule.rotation.y += (targetY + Math.sin(elapsed * 0.32) * 0.025 - capsule.rotation.y) * 0.035;
+      const scrollYaw = prefersReducedMotion ? 0 : (props.scrollProgress ?? 0) * 0.9;
+      const ambientYaw = prefersReducedMotion ? 0 : Math.sin(elapsed * 0.32) * 0.025;
+      capsule.rotation.y += (targetY + scrollYaw + ambientYaw - capsule.rotation.y) * 0.035;
       capsule.rotation.x += (targetX - capsule.rotation.x) * 0.035;
-      capsule.position.y = Math.sin(elapsed * 0.72) * 0.035;
+      capsule.position.y = prefersReducedMotion ? 0 : Math.sin(elapsed * 0.72) * 0.035;
       const wantedLid = props.open ? -1.12 : 0;
       lid.rotation.x += (wantedLid - lid.rotation.x) * 0.055;
-      halo.rotation.z = elapsed * 0.08;
+      halo.rotation.z = prefersReducedMotion ? 0 : elapsed * 0.08;
       renderer.render(scene, camera);
     };
     const visibilityObserver = new IntersectionObserver(entries => {

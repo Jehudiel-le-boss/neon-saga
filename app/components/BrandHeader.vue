@@ -3,7 +3,7 @@ import { Menu, Moon, Sun, X } from "@lucide/vue";
 import { ref } from "vue";
 
 const props = defineProps<{ theme: "dark" | "light" }>();
-const emit = defineEmits<{ toggleTheme: [] }>();
+const emit = defineEmits<{ toggleTheme: [event: MouseEvent] }>();
 const menuOpen = ref(false);
 
 const links = [
@@ -46,7 +46,7 @@ const links = [
       type="button"
       :aria-label="props.theme === 'dark' ? 'Activer le mode clair' : 'Activer le mode sombre'"
       :title="props.theme === 'dark' ? 'Mode clair' : 'Mode sombre'"
-      @click="emit('toggleTheme')"
+      @click="emit('toggleTheme', $event)"
     >
       <Sun v-if="props.theme === 'dark'" :size="17" />
       <Moon v-else :size="17" />
