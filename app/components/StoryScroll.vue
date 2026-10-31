@@ -18,10 +18,17 @@ const chapters = [
 ];
 const active = computed(() => chapters[activeChapter.value] ?? chapters[0]!);
 const motionStyle = computed(() => ({
-  "--scroll-rise": `${(-progress.value * 180).toFixed(1)}px`,
   "--film-drift": `${(-progress.value * 18).toFixed(1)}px`,
   "--ambient-drift": `${(-progress.value * 12).toFixed(1)}px`,
   "--film-zoom": `${(1 + progress.value * 0.03).toFixed(3)}`,
+}));
+const copyTrackStyle = computed(() => ({
+  height: `${chapters.length * 100}%`,
+  transform: `translate3d(0, ${(-progress.value * ((chapters.length - 1) / chapters.length) * 100).toFixed(3)}%, 0)`,
+}));
+const chapterPanelStyle = computed(() => ({
+  height: `${100 / chapters.length}%`,
+  flex: `0 0 ${100 / chapters.length}%`,
 }));
 const timeLabel = computed(() => {
   const seconds = Math.min(Math.floor(progress.value * duration.value), Math.floor(duration.value));
@@ -43,7 +50,7 @@ function updateProgress() {
   const next = Math.min(1, Math.max(0, -rect.top / travel));
   if (Math.abs(next - progress.value) > 0.0015) progress.value = next;
 
-  const nextChapter = Math.min(chapters.length - 1, Math.floor(next * chapters.length));
+  const nextChapter = Math.min(chapters.length - 1, Math.round(next * (chapters.length - 1)));
   if (nextChapter !== activeChapter.value) {
     activeChapter.value = nextChapter;
     emit("chapter", nextChapter);
@@ -74,7 +81,7 @@ function jumpToChapter(index: number) {
   emit("interaction");
   const start = window.scrollY + section.getBoundingClientRect().top;
   const travel = Math.max(section.offsetHeight - window.innerHeight, 1);
-  const targetProgress = (index + 0.45) / chapters.length;
+  const targetProgress = index / (chapters.length - 1);
   window.scrollTo({ top: start + travel * targetProgress, behavior: "smooth" });
 }
 
@@ -117,22 +124,29 @@ onBeforeUnmount(() => {
         <span>FILM <b>30 SEC</b></span>
       </div>
 
-      <Transition name="scroll-copy">
-        <article :key="activeChapter" class="scroll-film__copy">
-          <div class="scroll-film__copy-motion">
-            <p class="eyebrow"><span class="status-dot"></span>{{ active.label }}</p>
-            <h1 v-if="activeChapter === 0">{{ active.title }}<br /><em>{{ active.emphasis }}</em></h1>
-            <h2 v-else>{{ active.title }}<br /><em>{{ active.emphasis }}</em></h2>
-            <p class="scroll-film__description">{{ active.text }}</p>
-            <NuxtLink v-if="activeChapter === 0" class="button button-primary scroll-film__cta" to="/capsule" @click="emit('interaction')">
+      <div class="scroll-film__copy-viewport" aria-label="Texte du film, défilant avec la page">
+        <div class="scroll-film__copy-track" :style="copyTrackStyle">
+          <article
+            v-for="(chapter, index) in chapters"
+            :key="chapter.label"
+            class="scroll-film__copy"
+            :style="chapterPanelStyle"
+            :aria-hidden="activeChapter !== index"
+            :inert="activeChapter !== index"
+          >
+            <p class="eyebrow"><span class="status-dot"></span>{{ chapter.label }}</p>
+            <h1 v-if="index === 0">{{ chapter.title }}<br /><em>{{ chapter.emphasis }}</em></h1>
+            <h2 v-else>{{ chapter.title }}<br /><em>{{ chapter.emphasis }}</em></h2>
+            <p class="scroll-film__description">{{ chapter.text }}</p>
+            <NuxtLink v-if="index === 0" class="button button-primary scroll-film__cta" to="/capsule" @click="emit('interaction')">
               Découvrir la capsule <span aria-hidden="true">↘</span>
             </NuxtLink>
-            <div v-if="activeChapter === 0" class="scroll-film__facts" aria-label="La Collector Capsule en trois repères">
+            <div v-if="index === 0" class="scroll-film__facts" aria-label="La Collector Capsule en trois repères">
               <span><b>06</b> pièces</span><span><b>01</b> écrin</span><span><b>∞</b> univers</span>
             </div>
-          </div>
-        </article>
-      </Transition>
+          </article>
+        </div>
+      </div>
 
       <div class="scroll-film__position" aria-hidden="true">
         <span>{{ String(activeChapter + 1).padStart(2, "0") }}</span>
