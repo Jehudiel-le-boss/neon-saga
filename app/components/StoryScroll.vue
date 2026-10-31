@@ -17,6 +17,12 @@ const chapters = [
   { label: "05 / COLLECTION", title: "Tout retrouve", emphasis: "son écrin.", text: "Poursuivez pour refermer le récit — ou remontez pour revoir chaque détail à rebours." },
 ];
 const active = computed(() => chapters[activeChapter.value] ?? chapters[0]!);
+const motionStyle = computed(() => ({
+  "--scroll-rise": `${(-progress.value * 180).toFixed(1)}px`,
+  "--film-drift": `${(-progress.value * 18).toFixed(1)}px`,
+  "--ambient-drift": `${(-progress.value * 12).toFixed(1)}px`,
+  "--film-zoom": `${(1 + progress.value * 0.03).toFixed(3)}`,
+}));
 const timeLabel = computed(() => {
   const seconds = Math.min(Math.floor(progress.value * duration.value), Math.floor(duration.value));
   return `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
@@ -88,7 +94,7 @@ onBeforeUnmount(() => {
 
 <template>
   <section id="parcours" ref="track" class="scroll-film" aria-label="Film NEON SAGA piloté par le défilement">
-    <div class="scroll-film__sticky">
+    <div class="scroll-film__sticky" :style="motionStyle">
       <div class="scroll-film__ambient" aria-hidden="true"></div>
       <div class="scroll-film__visual">
         <video
@@ -111,17 +117,19 @@ onBeforeUnmount(() => {
         <span>FILM <b>30 SEC</b></span>
       </div>
 
-      <Transition name="scroll-copy" mode="out-in">
+      <Transition name="scroll-copy">
         <article :key="activeChapter" class="scroll-film__copy">
-          <p class="eyebrow"><span class="status-dot"></span>{{ active.label }}</p>
-          <h1 v-if="activeChapter === 0">{{ active.title }}<br /><em>{{ active.emphasis }}</em></h1>
-          <h2 v-else>{{ active.title }}<br /><em>{{ active.emphasis }}</em></h2>
-          <p class="scroll-film__description">{{ active.text }}</p>
-          <NuxtLink v-if="activeChapter === 0" class="button button-primary scroll-film__cta" to="/capsule" @click="emit('interaction')">
-            Découvrir la capsule <span aria-hidden="true">↘</span>
-          </NuxtLink>
-          <div v-if="activeChapter === 0" class="scroll-film__facts" aria-label="La Collector Capsule en trois repères">
-            <span><b>06</b> pièces</span><span><b>01</b> écrin</span><span><b>∞</b> univers</span>
+          <div class="scroll-film__copy-motion">
+            <p class="eyebrow"><span class="status-dot"></span>{{ active.label }}</p>
+            <h1 v-if="activeChapter === 0">{{ active.title }}<br /><em>{{ active.emphasis }}</em></h1>
+            <h2 v-else>{{ active.title }}<br /><em>{{ active.emphasis }}</em></h2>
+            <p class="scroll-film__description">{{ active.text }}</p>
+            <NuxtLink v-if="activeChapter === 0" class="button button-primary scroll-film__cta" to="/capsule" @click="emit('interaction')">
+              Découvrir la capsule <span aria-hidden="true">↘</span>
+            </NuxtLink>
+            <div v-if="activeChapter === 0" class="scroll-film__facts" aria-label="La Collector Capsule en trois repères">
+              <span><b>06</b> pièces</span><span><b>01</b> écrin</span><span><b>∞</b> univers</span>
+            </div>
           </div>
         </article>
       </Transition>
