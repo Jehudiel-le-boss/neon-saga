@@ -17,8 +17,21 @@ function onChapterChange(index: number) {
 }
 
 useSeoMeta({
-  title: "NEON SAGA — L’expérience immersive",
-  description: "Faites défiler le film NEON SAGA : une expérience de 30 secondes où chaque mouvement révèle la Collector Capsule.",
+  title: "NEON SAGA — Le film au fil du scroll",
+  description: "Faites défiler le film NEON SAGA : une expérience de 30 secondes où chaque mouvement révèle la Collector Capsule et ses pièces.",
+  ogType: "website",
+  ogTitle: "NEON SAGA — Le film au fil du scroll",
+  ogDescription: "Une expérience de 30 secondes où chaque mouvement révèle la Collector Capsule et ses pièces.",
+  ogImage: "https://raw.githubusercontent.com/Jehudiel-le-boss/neon-saga/main/public/media/capsule-hero.webp",
+  ogImageAlt: "Collector Capsule NEON SAGA dans une lumière bleu électrique et carmin",
+  twitterCard: "summary_large_image",
+  twitterTitle: "NEON SAGA — Le film au fil du scroll",
+  twitterDescription: "Une expérience de 30 secondes où chaque mouvement révèle la Collector Capsule et ses pièces.",
+  twitterImage: "https://raw.githubusercontent.com/Jehudiel-le-boss/neon-saga/main/public/media/capsule-hero.webp",
+  twitterImageAlt: "Collector Capsule NEON SAGA dans une lumière bleu électrique et carmin",
+});
+useHead({
+  meta: [{ name: "keywords", content: "NEON SAGA, Collector Capsule, film immersif, vidéo pilotée par le scroll, figurine cyberpunk" }],
 });
 </script>
 

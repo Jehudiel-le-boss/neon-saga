@@ -20,7 +20,6 @@ const active = computed(() => chapters[activeChapter.value] ?? chapters[0]!);
 const motionStyle = computed(() => ({
   "--film-drift": `${(-progress.value * 18).toFixed(1)}px`,
   "--ambient-drift": `${(-progress.value * 12).toFixed(1)}px`,
-  "--film-zoom": `${(1 + progress.value * 0.03).toFixed(3)}`,
 }));
 const copyTrackStyle = computed(() => ({
   height: `${chapters.length * 100}%`,
