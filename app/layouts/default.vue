@@ -167,7 +167,7 @@ onBeforeUnmount(() => {
   <div id="top" class="site-shell">
     <BrandHeader :theme="theme" @toggle-theme="toggleTheme" />
     <slot />
-    <audio ref="audioElement" src="/manus-storage/neon-saga-ambience_0a885fa9.mp3" preload="none" loop @play="playing = true" @pause="playing = false" @ended="playing = false" />
+    <audio ref="audioElement" src="/media/neon-saga-ambience.mp3" preload="none" loop @play="playing = true" @pause="playing = false" @ended="playing = false" />
     <AudioDock v-if="entered" :enabled="soundEnabled" :volume="volume" :playing="playing" @toggle="toggleSound" @update:volume="updateVolume" />
     <SoundGate :visible="!entered" @choose="enterExperience" />
   </div>

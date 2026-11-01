@@ -3,8 +3,8 @@ import { ref } from "vue";
 import { useSiteSound } from "~/composables/useSiteSound";
 
 const media = {
-  video: "/manus-storage/neon-saga-scroll-scrub_256a4f1e.mp4",
-  poster: "/manus-storage/capsule-hero_4839566a.webp",
+  video: "/media/neon-saga-scroll-scrub.mp4",
+  poster: "/media/capsule-hero.webp",
 };
 const activeChapter = ref(0);
 const playUiSound = useSiteSound();

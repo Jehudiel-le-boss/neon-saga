@@ -5,13 +5,13 @@ import { useIntersectionObserver } from "@vueuse/core";
 import { useSiteSound } from "~/composables/useSiteSound";
 
 const media = {
-  top: "/manus-storage/capsule-top_d8baa549.webp",
-  open: "/manus-storage/capsule-open_b90a1d03.webp",
-  exploded: "/manus-storage/capsule-exploded_193e25bd.webp",
-  figure: "/manus-storage/cyber-samurai_4e27a167.webp",
-  dragon: "/manus-storage/pulse-dragon_f419c303.webp",
-  card: "/manus-storage/holo-card_7b1433f0.webp",
-  accessories: "/manus-storage/pin-sword_e1092a47.webp",
+  top: "/media/capsule-top.webp",
+  open: "/media/capsule-open.webp",
+  exploded: "/media/capsule-exploded.webp",
+  figure: "/media/cyber-samurai.webp",
+  dragon: "/media/pulse-dragon.webp",
+  card: "/media/holo-card.webp",
+  accessories: "/media/pin-sword.webp",
 };
 
 const pieces = [

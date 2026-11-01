@@ -43,7 +43,12 @@ Le site généré se trouve dans `.output/public` et peut être déployé sur un
 - `app/composables/` regroupe les fonctions partagées côté Vue.
 - `app/assets/css/` contient le système visuel et les animations.
 - `public/manus-routes.json` déclare les routes au projet WebDev.
+- `public/media/` contient la vidéo, la musique et les visuels utilisés par le site.
 
 ## Médias
 
-Les vidéos, la musique et les visuels optimisés sont servis dans l’aperçu WebDev depuis le stockage du projet via des chemins `/manus-storage/...`. Les fichiers médias ne sont pas inclus dans ce dépôt Git. Pour exécuter ou déployer le projet hors de WebDev, il faut les héberger séparément et remplacer leurs chemins dans les fichiers de la page d’accueil et de la page capsule.
+Les médias sont inclus dans Git et copiés dans le build statique par Nuxt; le site ne dépend plus des chemins `/manus-storage/...`.
+
+- `public/media/neon-saga-scroll-scrub.mp4` — vidéo H.264 de 30 secondes, en 16:9 (1344 × 756), conçue pour le scrubbing au scroll.
+- `public/media/neon-saga-ambience.mp3` — ambiance musicale en boucle.
+- `public/media/` contient aussi l’affiche de la capsule, les vues du coffret, le cyber-samouraï, le mini-dragon, la carte holographique et l’accessoire.
